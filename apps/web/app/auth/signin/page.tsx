@@ -18,7 +18,10 @@ export default function SignInPage() {
     e.preventDefault();
     setError(null);
     setBusy(true);
-    const { error: err } = await authClient.signIn.emailOtp({ email });
+    const { error: err } = await authClient.emailOtp.sendVerificationOtp({
+      email,
+      type: "sign-in",
+    });
     setBusy(false);
     if (err) {
       setError(err.message ?? "Could not send the code. Try again.");
