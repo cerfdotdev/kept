@@ -31,6 +31,7 @@ export default function proxy(request: NextRequest) {
     response.headers.set("X-Frame-Options", "DENY");
     response.headers.set("X-XSS-Protection", "0");
     requestHeaders.set("x-nonce", nonce);
+    requestHeaders.set("Content-Security-Policy", csp);
     return NextResponse.next({ request: { headers: requestHeaders }, headers: response.headers });
   }
 
