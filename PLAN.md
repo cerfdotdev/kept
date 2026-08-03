@@ -86,3 +86,20 @@ ingest (dedupe/idempotency) → rules catalog (merchant patterns ~200 seeded, ca
 | Dokploy compose gotchas | Use public git URL sourceType=git; env via compose.saveEnvironment + `env_file`; domain labels need redeploy; poll deployment status |
 | Secrets in logs | Never echo; CI masks; Dokploy env only |
 | Time/complexity | Demo-mode defaults keep every flow functional without external keys |
+
+## DEPLOYMENT STATUS — 2026-08-03 (COMPLETED)
+
+- **Repo**: https://github.com/cerfdotdev/kept (public) · **Production**: https://kept.dok.cerf.codes (Let's Encrypt via Dokploy/Traefik, wildcard *.dok.cerf.codes)
+- **Stack deployed**: compose `kept` on Dokploy (project `ledgerfolk`, env `production`) — web (Next 16 standalone, non-root, read-only rootfs, CSP nonce), worker (pg-boss: classification/minute, feed-ingest/6h, close-open/daily, sla-sweep/hourly, escrow-export/nightly), postgres:16 (digest-pinned, RLS on money tables, checksums), backup (pg_dump nightly, 14-day retention), migrate (one-shot).
+- **CI/CD**: `ci.yml` (actionlint + typecheck + vitest + `next build` + pnpm audit gate) and `deploy.yml` (Dockerfile compile check → Dokploy API trigger `compose.deploy` → prod health smoke) — both green on main; deploy auto-runs on push.
+- **Secrets**: Dokploy env via `compose.saveEnvironment` (BETTER_AUTH_SECRET, NEXT_SERVER_ACTIONS_ENCRYPTION_KEY, DB creds, etc.); GitHub secrets `DOKPLOY_API_KEY`, `DOKPLOY_COMPOSE_ID`; no .env committed.
+- **Supply chain**: SHA-pinned actions, digest-pinned base images, frozen lockfile, dependabot (npm/actions/docker), SBOM not required at this stage.
+- **Verified on prod**: TLS health 200 · landing (GSAP) with matching CSP nonces · OTP sign-in + demo code relay · dashboard/portal/reviewer/admin routes · worker classification pipeline (auto vs review queue) · RLS scoping · escrow exports job.
+- **Known follow-ups**: Resend/Stripe/Plaid/LLM keys optional (graceful demo fallbacks); dependabot esbuild medium (transitive, PR-tracked); SOC 2 Type II at M18-24; remove DEMO_MODE when GA.
+
+### Runbook
+- Deploy: push to main (CI gates → Dokploy rebuild from git → smoke). Manual: `gh workflow run deploy.yml`.
+- Rollback: `compose.redeploy` with prior commit or Dokploy UI redeploy.
+- Backups: nightly `pg_dump -Fc` → volume `backups` (14d); escrow CSVs nightly → volume `escrow`.
+- Migrations: applied by `migrate` service on deploy (idempotent, tracked in `kept_migrations`).
+- Secrets: `curl -X POST https://dokploy.cerf.codes/api/compose.saveEnvironment` (x-api-key) or Dokploy UI.
