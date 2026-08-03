@@ -1,0 +1,11 @@
+node_modules
+.next
+.turbo
+dist
+build
+.env
+.env*.local
+*.tsbuildinfo
+.DS_Store
+coverage
+apps/web/ba_min.ts

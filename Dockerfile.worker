@@ -1,0 +1,30 @@
+# syntax=docker/dockerfile:1
+
+# ---- deps ----
+FROM node:24-slim@sha256:235600a8101ab264e117b1768e925532262668dc9b581ef1dd7d96ced463b8e7 AS deps
+ENV PNPM_HOME=/pnpm PATH=/pnpm:$PATH
+RUN corepack enable && pnpm config set store-dir /pnpm/store
+WORKDIR /app
+COPY . .
+RUN pnpm install --frozen-lockfile
+
+# ---- builder ----
+FROM node:24-slim@sha256:235600a8101ab264e117b1768e925532262668dc9b581ef1dd7d96ced463b8e7 AS builder
+ENV PNPM_HOME=/pnpm PATH=/pnpm:$PATH
+RUN corepack enable && pnpm config set store-dir /pnpm/store
+WORKDIR /app
+COPY --from=deps /app ./
+RUN pnpm --filter worker build
+
+# ---- runner ----
+FROM node:24-slim@sha256:235600a8101ab264e117b1768e925532262668dc9b581ef1dd7d96ced463b8e7 AS runner
+ENV NODE_ENV=production
+WORKDIR /app
+RUN useradd -r -u 1001 kept && mkdir -p /tmp && chown -R kept:kept /app
+COPY --from=builder --chown=kept:kept /app/apps/worker/dist ./apps/worker/dist
+COPY --from=builder --chown=kept:kept /app/node_modules ./node_modules
+COPY --from=builder --chown=kept:kept /app/apps/worker/node_modules ./apps/worker/node_modules
+COPY --from=builder --chown=kept:kept /app/packages/db/node_modules ./packages/db/node_modules
+COPY --from=builder --chown=kept:kept /app/packages/db/src/drizzle ./packages/db/src/drizzle
+USER 1001
+CMD ["node", "apps/worker/dist/index.js"]

@@ -1,0 +1,178 @@
+@import "tailwindcss";
+
+@theme {
+  --color-cream: #f7f3ea;
+  --color-cream-light: #fdfbf5;
+  --color-cream-dark: #efe8d8;
+  --color-ink: #1e4d43;
+  --color-ink-deep: #16392f;
+  --color-ink-soft: #5a7a70;
+  --color-moss: #3f6f63;
+  --color-amber: #c97f2f;
+  --color-amber-deep: #a8621f;
+  --color-signal: #2f7d5b;
+  --color-line: #d8cdb4;
+  --font-display: var(--font-fraunces), Georgia, serif;
+  --font-body: var(--font-source-sans), system-ui, sans-serif;
+  --font-mono-label: var(--font-plex-mono), ui-monospace, monospace;
+}
+
+:root {
+  color-scheme: light;
+}
+
+* {
+  border-color: var(--color-line);
+}
+
+html {
+  scroll-behavior: auto; /* Lenis handles smooth scrolling; GSAP requirement */
+  background: var(--color-cream);
+}
+
+body {
+  background: var(--color-cream);
+  color: var(--color-ink-deep);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--color-ink);
+  color: var(--color-cream);
+}
+
+.font-display {
+  font-family: var(--font-display);
+}
+
+.font-mono-label {
+  font-family: var(--font-mono-label);
+}
+
+.eyebrow {
+  font-family: var(--font-mono-label);
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-moss);
+}
+
+/* ---------- components ---------- */
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: var(--color-ink);
+  color: var(--color-cream);
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 0.8rem 1.6rem;
+  border-radius: 999px;
+  transition: background 0.2s ease, transform 0.2s ease;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  background: var(--color-ink-deep);
+}
+
+.btn-primary:focus-visible {
+  outline: 2px solid var(--color-amber-deep);
+  outline-offset: 2px;
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border: 1px solid var(--color-ink);
+  color: var(--color-ink);
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 0.8rem 1.6rem;
+  border-radius: 999px;
+  background: transparent;
+  transition: background 0.2s ease;
+  cursor: pointer;
+}
+
+.btn-secondary:hover {
+  background: var(--color-cream-dark);
+}
+
+.card {
+  background: var(--color-cream-light);
+  border: 1px solid var(--color-line);
+  border-radius: 1rem;
+}
+
+.section-pad {
+  padding-top: clamp(4rem, 9vw, 8rem);
+  padding-bottom: clamp(4rem, 9vw, 8rem);
+}
+
+/* ---------- grain overlay ---------- */
+
+.grain::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 60;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.6'/%3E%3C/svg%3E");
+}
+
+/* ---------- marquee ---------- */
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee 28s linear infinite;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee {
+    animation: none;
+  }
+}
+
+/* ---------- misc ---------- */
+
+.link-underline {
+  text-decoration: underline;
+  text-decoration-color: var(--color-amber);
+  text-underline-offset: 4px;
+  text-decoration-thickness: 2px;
+}
+
+input,
+select,
+textarea {
+  font-family: var(--font-body);
+}
+
+th,
+td {
+  vertical-align: middle;
+}
+
+/* focus visibility for app surfaces */
+.app-surface :focus-visible {
+  outline: 2px solid var(--color-amber-deep);
+  outline-offset: 2px;
+}
