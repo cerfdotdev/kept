@@ -2,6 +2,10 @@ import type { Metadata, Viewport } from "next";
 import { Fraunces, IBM_Plex_Mono, Source_Sans_3 } from "next/font/google";
 import "./globals.css";
 
+// Nonce-based CSP requires dynamic rendering on every page (Next 16 docs:
+// content-security-policy). Static prerender cannot receive per-request nonces.
+export const dynamic = "force-dynamic";
+
 const fraunces = Fraunces({
   subsets: ["latin"],
   variable: "--font-fraunces",

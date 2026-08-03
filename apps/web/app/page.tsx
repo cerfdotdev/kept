@@ -1,7 +1,6 @@
 import { LenisProvider } from "@/lib/lenis-provider";
 
-// Nonce-based CSP requires dynamic rendering (Next 16 docs: content-security-policy).
-export const dynamic = "force-dynamic";
+
 import { Shell } from "@/components/landing/shell";
 import { Grain } from "@/components/landing/grain";
 import { Hero } from "@/components/landing/hero";
