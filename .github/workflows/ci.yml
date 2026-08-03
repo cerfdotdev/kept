@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-      - uses: raven-actions/actionlint@9ac19d532a51ef070dff9270a2912ed61a0fd05e # v1.0.0
+      - uses: raven-actions/actionlint@b1c8b555f41e4e9fddd15c9848e07a837dbd9773 # v1.0.0
 
   lint-typecheck-test:
     runs-on: ubuntu-latest
