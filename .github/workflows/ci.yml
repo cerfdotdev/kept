@@ -17,10 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-      - uses: rhysd/actionlint-docker-action@59a8e38291e34e2a7a6e1a1f078001f94196f423 # v1.7.7
-        with:
-          checks: |
-            - shellcheck=off
+      - uses: raven-actions/actionlint@9ac19d532a51ef070dff9270a2912ed61a0fd05e # v1.0.0
 
   lint-typecheck-test:
     runs-on: ubuntu-latest
