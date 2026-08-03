@@ -44,7 +44,7 @@ jobs:
             -d "{\"composeId\": \"${{ secrets.DOKPLOY_COMPOSE_ID }}\", \"title\": \"${{ github.sha }}\"}"
       - name: Smoke test
         run: |
-          for i in $(seq 1 30); do
+          for _attempt in $(seq 1 30); do
             code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 https://kept.dok.cerf.codes/api/health || true)
             if [ "$code" = "200" ]; then echo "health OK"; exit 0; fi
             sleep 20
